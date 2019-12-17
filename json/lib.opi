@@ -1,0 +1,5 @@
+
+module JSON =
+  load "lib.so"
+  let parse = __JSON_parse
+end

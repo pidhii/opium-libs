@@ -1,0 +1,29 @@
+
+{
+  let name = "JSON"
+  let main = "lib.opi"
+  let files = ["lib.opi" "lib.so"]
+
+  let build root =
+    -- build cJSON
+    let flags = concat [
+      "-DCMAKE_INSTALL_PREFIX=../install "
+      "-DENABLE_CJSON_TEST=Off "
+      "-DENABLE_CJSON_UTILS=Off "
+      "-DENABLE_VALGRIND=Off "
+      "-DENABLE_SANITIZERS=Off "
+      "-DBUILD_SHARED_LIBS=Off"
+    ] in
+    system $ "mkdir -p build" ++
+             "&& cd build" ++
+             "&& cmake ../cJSON %{flags}" ++
+             "&& make install";
+    -- build library
+    let w = "-Wall -Werror -Wextra -Wno-unused" in
+    let i = "-I $OPIUM_ROOT/include -I %{root}/install/include" in
+    let src = "%{root}/lib.c %{root}/install/lib/libcjson.a" in
+    `gcc %{w} %{i} -O3 -fpic -shared -o%{root}/lib.so %{src}`
+
+  let postinstall root =
+    `rm -rfv build install %{root}/lib.so`
+}

@@ -1,0 +1,3 @@
+[submodule "json/cJSON"]
+	path = json/cJSON
+	url = git@github.com:DaveGamble/cJSON.git
