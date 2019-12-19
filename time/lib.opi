@@ -1,0 +1,64 @@
+
+module Time =
+  load "lib.so"
+
+  module Tm =
+    let fullYear Tm { year } =
+      year + 1900
+  end
+
+  module TimeSpec =
+    let seconds TimeSpec { sec, nsec } =
+      sec + nsec * 1e-9
+    let milliseconds TimeSpec { sec, nsec } =
+      sec * 1e3 + nsec * 1e-6
+    let microseconds TimeSpec { sec, nsec } =
+      sec * 1e6 + nsec * 1e-3
+    let nanoseconds TimeSpec { sec, nsec } =
+      sec * 1e9 + nsec
+  end
+
+  struct Date { esec, local, utc }
+
+  module Date =
+    let now () =
+      let t = time () in
+      Date { esec = t, local = localtime t, utc = gmtime t }
+
+    -- Year.
+    let year Date { local } = Tm.fullYear local
+    let yearUtc Date { utc } = Tm.fullYear utc
+
+    -- Month.
+    let month Date { local = Tm { mon } } = mon
+    let monthUtc Date { utc = Tm { mon } } = mon
+
+    -- Day of year.
+    let dayOfYear Date { local = Tm { yday } } = yday
+    let dayOfYearUtc Date { utc = Tm { yday } } = yday
+
+    -- Day of month.
+    let dayOfMonth Date { local = Tm { mday } } = mday
+    let dayOfMontUtc Date { utc = Tm { mday } } = mday
+
+    -- Day of week.
+    let dayOfWeek Date { local = Tm { wday } } = wday
+    let dayOfWeekUtc Date { utc = Tm { wday } } = wday
+
+    -- Hour.
+    let hour Date { local = Tm { hour } } = hour
+    let hourUtc Date { utc = Tm { hour } } = hour
+
+    -- Minutes.
+    let minutes Date { local = Tm { min } } = min
+    let minutesUtc Date { utc = Tm { min } } = min
+
+    -- Seconds.
+    let seconds Date { local = Tm { sec } } = sec
+    let secondsUtc Date { utc = Tm { sec } } = sec
+
+    -- String.
+    let toString Date { local } = chop $ asctime local
+    let toStringUtc Date { utc } = chop $ asctime utc
+  end
+end
