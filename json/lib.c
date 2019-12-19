@@ -39,7 +39,7 @@ json_to_opi(const cJSON *json)
 }
 
 static opi_t
-json_parse(void)
+parse(void)
 {
   OPI_FN()
   OPI_ARG(str, opi_string_type)
@@ -52,6 +52,6 @@ json_parse(void)
 int
 opium_library(OpiBuilder * bldr)
 {
-  opi_builder_def_const(bldr, "__JSON_parse", opi_fn(NULL, json_parse, 1));
+  opi_builder_def_const(bldr, "parse", opi_fn(NULL, parse, 1));
   return 0;
 }
