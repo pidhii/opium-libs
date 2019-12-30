@@ -38,16 +38,14 @@ json_to_opi(const cJSON *json)
   }
 }
 
-static opi_t
-parse(void)
-{
-  OPI_FN()
-  OPI_ARG(str, opi_string_type)
+static
+OPI_DEF(parse,
+  opi_arg(str, opi_string_type)
   cJSON *json = cJSON_Parse(OPI_STR(str)->str);
   if (!json)
-    OPI_THROW("json-error");
-  OPI_RETURN(json_to_opi(json));
-}
+    opi_throw("json-error");
+  opi_return(json_to_opi(json));
+)
 
 int
 opium_library(OpiBuilder * bldr)

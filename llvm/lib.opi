@@ -1,0 +1,4 @@
+
+module Llvm =
+  load "lib.so"
+end
