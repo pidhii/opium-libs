@@ -46,7 +46,7 @@ time_spec_delete(opi_type_t type, opi_t x)
   TimeSpec *ts = TIME_SPEC(x);
   opi_unref(ts->sec);
   opi_unref(ts->nsec);
-  free(ts);
+  opi_h2w_free(ts);
 }
 
 static void
@@ -92,7 +92,7 @@ tm_new(const struct tm *tm)
 static opi_t
 time_spec_new(const struct timespec *ts)
 {
-  TimeSpec *ret = malloc(sizeof(TimeSpec));
+  TimeSpec *ret = opi_h2w();
   opi_inc_rc(ret->sec = opi_num_new(ts->tv_sec));
   opi_inc_rc(ret->nsec = opi_num_new(ts->tv_nsec));
   opi_init_cell(ret, time_spec_type);
@@ -109,9 +109,9 @@ OPI_DEF(asctime_,
   Tm_to_tm(x, &tm);
   char *s = asctime(&tm);
   if (s == NULL)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
-    opi_return(opi_string_new(s));
+    opi_return(opi_str_new(s));
 )
 
 static
@@ -120,17 +120,17 @@ OPI_DEF(ctime_,
   time_t tt = OPI_NUM(t)->val;
   char *s = ctime(&tt);
   if (s == NULL)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
-    opi_return(opi_string_new(s));
+    opi_return(opi_str_new(s));
 )
 
 static
 OPI_DEF(getdate_,
-  opi_arg(s, opi_string_type)
+  opi_arg(s, opi_str_type)
   struct tm *tm = getdate(OPI_STR(s)->str);
   if (tm == NULL)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(tm_new(tm));
 )
@@ -141,7 +141,7 @@ OPI_DEF(gmtime_,
   time_t tt = OPI_NUM(t)->val;
   struct tm *tm = gmtime(&tt);
   if (tm == NULL)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(tm_new(tm));
 )
@@ -152,7 +152,7 @@ OPI_DEF(localtime_,
   time_t tt = OPI_NUM(t)->val;
   struct tm *tm = localtime(&tt);
   if (tm == NULL)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(tm_new(tm));
 )
@@ -164,7 +164,7 @@ OPI_DEF(mktime_,
   Tm_to_tm(x, &tm);
   time_t t = mktime(&tm);
   if (t == (time_t)-1)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(opi_num_new(t));
 )
@@ -174,9 +174,21 @@ OPI_DEF(Clock_gettime,
   opi_arg(c, opi_num_type)
   struct timespec ts;
   if (clock_gettime(OPI_NUM(c)->val, &ts) < 0)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(time_spec_new(&ts));
+)
+
+static
+OPI_DEF(TimeSpec_create,
+  opi_arg(sec, opi_num_type)
+  opi_arg(nsec, opi_num_type)
+  if (OPI_NUM(nsec)->val > 1e9)
+    opi_throw("domain-error");
+  struct timespec ts;
+  ts.tv_sec = OPI_NUM(sec)->val;
+  ts.tv_nsec = OPI_NUM(nsec)->val;
+  opi_return(time_spec_new(&ts));
 )
 
 static
@@ -184,7 +196,7 @@ OPI_DEF(Clock_getres,
   opi_arg(c, opi_num_type)
   struct timespec ts;
   if (clock_getres(OPI_NUM(c)->val, &ts) < 0)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(time_spec_new(&ts));
 )
@@ -196,7 +208,7 @@ OPI_DEF(Clock_settime,
   struct timespec ts;
   TimeSpec_to_timespec(t, &ts);
   if (clock_settime(OPI_NUM(c)->val, &ts) < 0)
-    opi_return(opi_undefined(opi_string_new(strerror(errno))));
+    opi_return(opi_undefined(opi_str_new(strerror(errno))));
   else
     opi_return(opi_nil);
 )
@@ -207,15 +219,15 @@ opium_library(OpiBuilder *bldr)
   tm_type = opi_type_new("Tm");
   opi_type_set_delete_cell(tm_type, tm_delete);
   char *fields[] = { "sec", "min", "hour", "mday", "mon", "year", "wday", "yday", "isdst" };
-  opi_type_set_fields(tm_type, offsetof(Tm, sec), fields, sizeof(fields) / sizeof(fields[0]));
+  opi_type_set_fields(tm_type, offsetof(Tm, sec), fields, 9);
+  opi_builder_def_type(bldr, "Tm", tm_type);
 
   time_spec_type = opi_type_new("TimeSpec");
   opi_type_set_delete_cell(time_spec_type, time_spec_delete);
   char *fields2[] = { "sec", "nsec" };
-  opi_type_set_fields(time_spec_type, offsetof(TimeSpec, sec), fields2, sizeof(fields2) / sizeof(fields2[0]));
-
-  opi_builder_def_type(bldr, "Tm", tm_type);
+  opi_type_set_fields(time_spec_type, offsetof(TimeSpec, sec), fields2, 2);
   opi_builder_def_type(bldr, "TimeSpec", time_spec_type);
+  opi_builder_def_const(bldr, "TimeSpec.create", opi_fn(0, TimeSpec_create, 2));
 
   opi_builder_def_const(bldr, "time", opi_fn(0, time_, 0));
   opi_builder_def_const(bldr, "asctime", opi_fn(0, asctime_, 1));
