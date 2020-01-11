@@ -227,14 +227,14 @@ opium_library(OpiBuilder *bldr)
   char *fields2[] = { "sec", "nsec" };
   opi_type_set_fields(time_spec_type, offsetof(TimeSpec, sec), fields2, 2);
   opi_builder_def_type(bldr, "TimeSpec", time_spec_type);
-  opi_builder_def_const(bldr, "TimeSpec.create", opi_fn(0, TimeSpec_create, 2));
+  opi_builder_def_const(bldr, "TimeSpec.create", opi_fn_new(TimeSpec_create, 2));
 
-  opi_builder_def_const(bldr, "time", opi_fn(0, time_, 0));
-  opi_builder_def_const(bldr, "asctime", opi_fn(0, asctime_, 1));
-  opi_builder_def_const(bldr, "ctime", opi_fn(0, ctime_, 1));
-  opi_builder_def_const(bldr, "getdate", opi_fn(0, getdate_, 1));
-  opi_builder_def_const(bldr, "gmtime", opi_fn(0, gmtime_, 1));
-  opi_builder_def_const(bldr, "localtime", opi_fn(0, localtime_, 1));
+  opi_builder_def_const(bldr, "time", opi_fn_new(time_, 0));
+  opi_builder_def_const(bldr, "asctime", opi_fn_new(asctime_, 1));
+  opi_builder_def_const(bldr, "ctime", opi_fn_new(ctime_, 1));
+  opi_builder_def_const(bldr, "getdate", opi_fn_new(getdate_, 1));
+  opi_builder_def_const(bldr, "gmtime", opi_fn_new(gmtime_, 1));
+  opi_builder_def_const(bldr, "localtime", opi_fn_new(localtime_, 1));
 
   opi_builder_def_const(bldr, "Clock.realtime", opi_num_new(CLOCK_REALTIME));
   opi_builder_def_const(bldr, "Clock.realtimeCoarse", opi_num_new(CLOCK_REALTIME_COARSE));
@@ -245,9 +245,9 @@ opium_library(OpiBuilder *bldr)
   opi_builder_def_const(bldr, "Clock.processCputimeId", opi_num_new(CLOCK_PROCESS_CPUTIME_ID));
   opi_builder_def_const(bldr, "Clock.threadCputimeId", opi_num_new(CLOCK_THREAD_CPUTIME_ID));
 
-  opi_builder_def_const(bldr, "Clock.gettime", opi_fn(0, Clock_gettime, 1));
-  opi_builder_def_const(bldr, "Clock.getres", opi_fn(0, Clock_getres, 1));
-  opi_builder_def_const(bldr, "Clock.settime", opi_fn(0, Clock_settime, 2));
+  opi_builder_def_const(bldr, "Clock.gettime", opi_fn_new(Clock_gettime, 1));
+  opi_builder_def_const(bldr, "Clock.getres", opi_fn_new(Clock_getres, 1));
+  opi_builder_def_const(bldr, "Clock.settime", opi_fn_new(Clock_settime, 2));
 
   return 0;
 }

@@ -13,7 +13,7 @@ json_to_opi(const cJSON *json)
   } else if (cJSON_IsNumber(json)) {
     return opi_num_new(json->valuedouble);
   } else if (cJSON_IsString(json)) {
-    return opi_string_new(json->valuestring);
+    return opi_str_new(json->valuestring);
   } else if (cJSON_IsArray(json)) {
     int len = cJSON_GetArraySize(json);
     opi_t *data = malloc(sizeof(opi_t) * len);
@@ -27,7 +27,7 @@ json_to_opi(const cJSON *json)
     opi_t l = opi_nil;
     const cJSON *elt = NULL;
     cJSON_ArrayForEach(elt, json) {
-      opi_t key = opi_string_new(elt->string);
+      opi_t key = opi_str_new(elt->string);
       opi_t val = json_to_opi(elt);
       l = opi_cons(opi_cons(key, val), l);
     }
@@ -40,7 +40,7 @@ json_to_opi(const cJSON *json)
 
 static
 OPI_DEF(parse,
-  opi_arg(str, opi_string_type)
+  opi_arg(str, opi_str_type)
   cJSON *json = cJSON_Parse(OPI_STR(str)->str);
   if (!json)
     opi_throw("json-error");
@@ -50,6 +50,6 @@ OPI_DEF(parse,
 int
 opium_library(OpiBuilder * bldr)
 {
-  opi_builder_def_const(bldr, "parse", opi_fn(NULL, parse, 1));
+  opi_builder_def_const(bldr, "parse", opi_fn_new(parse, 1));
   return 0;
 }
