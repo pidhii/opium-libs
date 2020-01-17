@@ -1,0 +1,4 @@
+
+module Random =
+  load "lib.so"
+end
