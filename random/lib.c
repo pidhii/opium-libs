@@ -44,7 +44,7 @@ opi_type_t drand48_data_type;
 static opi_t
 drand48_data_new(struct drand48_data *data)
 {
-  DRand48Data *d48 = malloc(sizeof(struct drand48_data));
+  DRand48Data *d48 = malloc(sizeof(DRand48Data));
   memcpy(&d48->data, data, sizeof(struct drand48_data));
   opi_init_cell(d48, drand48_data_type);
   return OPI(d48);
@@ -112,6 +112,7 @@ OPI_DEF(srand48_r_,
   opi_arg(seed, opi_num_type)
   struct drand48_data data;
   srand48_r(OPI_NUM(seed)->val, &data);
+  opi_drop(seed);
   opi_return(drand48_data_new(&data));
 )
 
@@ -195,14 +196,16 @@ random_(void)
 int
 opium_library(OpiBuilder *bldr)
 {
+  drand48_data_type = opi_type_new("DRand48Data");
+  opi_type_set_delete_cell(drand48_data_type, OPI_FREE_CELL);
+  opi_builder_def_type(bldr, "DRand48Data", drand48_data_type);
+
   opi_builder_def_const(bldr, "randMax", opi_num_new(RAND_MAX));
 
   opi_builder_def_const(bldr, "srand", opi_fn_new(srand_, 1));
   opi_builder_def_const(bldr, "rand", opi_fn_new(rand_, 0));
   opi_builder_def_const(bldr, "rand_r", opi_fn_new(rand_r_, 1));
 
-  drand48_data_type = opi_type_new("DRand48Data");
-  opi_type_set_delete_cell(drand48_data_type, OPI_FREE_CELL);
   opi_builder_def_const(bldr, "DRand48Data.copy", opi_fn_new(DRand48Data_copy, 1));
   opi_builder_def_const(bldr, "srand48", opi_fn_new(srand48_, 1));
   opi_builder_def_const(bldr, "srand48_r", opi_fn_new(srand48_r_, 1));
