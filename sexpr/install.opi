@@ -1,0 +1,12 @@
+{
+  let name = "sexpr"
+  let main = "lib.opi"
+  let files = ["lib.opi" "lib.so"]
+  let build root =
+    let w = "-Wall -Werror -Wextra -Wno-unused" in
+    let i = "-I $OPIUM_ROOT/include" in
+    let src = `echo %{root}/*.c` in
+    `gcc %{w} %{i} -O3 -fpic -shared -o%{root}/lib.so %{src}`
+  let postinstall root =
+    `rm -v %{root}/lib.so`
+}
