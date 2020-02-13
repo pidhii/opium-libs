@@ -1,7 +1,7 @@
 {
   let name = "random"
   let main = "lib.opi"
-  let files = ["lib.opi" "lib.so"]
+  let files = ["lib.opi", "lib.so"]
   let build root =
     let w = "-Wall -Werror -Wextra -Wno-unused" in
     let i = "-I $OPIUM_ROOT/include" in

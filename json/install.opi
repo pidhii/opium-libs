@@ -4,22 +4,22 @@ let run err cmd =
 return {
   let name = "json"
   let main = "lib.opi"
-  let files = ["lib.opi" "lib.so"]
+  let files = ["lib.opi", "lib.so"]
 
   let build root =
     -- build cJSON
     let flags = join " " [
-      "-DCMAKE_INSTALL_PREFIX=../install"
-      "-DENABLE_CJSON_TEST=Off"
-      "-DENABLE_CJSON_UTILS=Off"
-      "-DENABLE_VALGRIND=Off"
-      "-DENABLE_SANITIZERS=Off"
+      "-DCMAKE_INSTALL_PREFIX=../install",
+      "-DENABLE_CJSON_TEST=Off",
+      "-DENABLE_CJSON_UTILS=Off",
+      "-DENABLE_VALGRIND=Off",
+      "-DENABLE_SANITIZERS=Off",
       "-DBUILD_SHARED_LIBS=Off"
     ] in
     run 'build-error $ join "&&" [
-      "mkdir -p %{root}/build"
-      "cd %{root}/build"
-      "cmake ../cJSON %{flags}"
+      "mkdir -p %{root}/build",
+      "cd %{root}/build",
+      "cmake ../cJSON %{flags}",
       "make install"
     ];
     -- build library
