@@ -1,0 +1,42 @@
+
+module Socket =
+  module Detail =
+    load "lib.so"
+  end
+
+  module Domain =
+    let unix = Detail.afUnix
+    let local = Detail.afLocal
+    let inet = Detail.afInet
+    let inet6 = Detail.afInet6
+  end
+
+  module Type =
+    let stream = Detail.sockStream
+  end
+
+  let getProtoByName = Detail.getprotobyname
+
+  let getHostByName = Detail.gethostbyname
+
+  let socket ..va =
+    let cfg = car va or { } in
+    let domain = cfg::domain or Domain.inet in
+    let type = cfg::type or Type.stream in
+    let protocol = cfg::protocol or cfg::proto or 0 in
+    Detail.socket domain type protocol
+
+  let hostToNet x ..va =
+    if x is 'short then Detail.htons $ car va
+    else Detail.htons x
+
+  module Inet =
+    let address host port =
+      let port = Detail.htons port
+      and host = if host is Str then Detail.inet_aton host else host
+      in Detail.sockaddr_in Domain.inet port host
+  end
+
+  let connect = Detail.connect
+end
+

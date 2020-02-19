@@ -1,0 +1,50 @@
+
+module PLplot =
+  module Detail =
+    load "lib.so"
+  end
+
+  let _PL_PARSE_FULL = Detail._PL_PARSE_FULL
+  let _PL_PARSE_QUIET = Detail._PL_PARSE_QUIET
+  let _PL_PARSE_NODELETE = Detail._PL_PARSE_NODELETE
+  let _PL_PARSE_SHOWALL = Detail._PL_PARSE_SHOWALL
+  let _PL_PARSE_NOPROGRAM = Detail._PL_PARSE_NOPROGRAM
+  let _PL_PARSE_NODASH = Detail._PL_PARSE_NODASH
+  let _PL_PARSE_SKIP = Detail._PL_PARSE_SKIP
+
+  let plparseopts argv mode = Detail.plparseopts (array argv) mode
+  let plinit = Detail.plinit
+  let plend = Detail.plend
+  let plenv = Detail.plenv
+  let pllab = Detail.pllab
+  let plline n x y =
+    let maxSize = min (Buffer.size x) (Buffer.size y) in
+    if n > floor (maxSize / 8)
+    then error 'range-error
+    else Detail.plline n x y
+
+  module Col0 =
+    let background = 0
+    let foreground = 1
+    let yellow = 2
+    let green = 3
+    let aquamarine = 4
+    let pink = 5
+    let wheat = 6
+    let grey = 7
+    let brown = 8
+    let blue = 9
+    let blueViolet = 10
+    let cyan = 11
+    let turquoise = 12
+    let magenta = 13
+    let salmon = 14
+    let white = 15
+  end
+  let plcol0 = Detail.plcol0
+  let plscol0 = Detail.plscol0
+
+  let plclear = Detail.plclear
+  let plflush = Detail.plflush
+  let plxormod = Detail.plxormod
+end

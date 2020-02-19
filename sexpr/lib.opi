@@ -1,29 +1,28 @@
-{-
- -------------------------------------------------------------------------------
- - Description:
- - Read symbolic expression from file.
- -
- - Signature:
- - read <input-port> -> <any>
- -
- - Errors:
- - * type-error
- - * parse-error
- - * empty-input
- -
- -------------------------------------------------------------------------------
- - Description:
- - Parse symbolic expression.
- -
- - Signature:
- - parse <buffer> -> <any>
- -       <string> -> <any>
- -
- - Errors:
- - * type-error
- - * parse-error
- - * empty-input
- -}
+#-------------------------------------------------------------------------------
+# Description:
+# Read symbolic expression from file.
+#
+# Signature:
+# read <input-port> -> <any>
+#
+# Errors:
+# * type-error
+# * parse-error
+# * empty-input
+#
+#------------------------------------------------------------------------------
+# Description:
+# Parse symbolic expression.
+#
+# Signature:
+# parse <buffer> -> <any>
+#       <string> -> <any>
+#
+# Errors:
+# * type-error
+# * parse-error
+# * empty-input
+#
 
 module SExpr =
   load "lib.so"

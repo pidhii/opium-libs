@@ -1,13 +1,12 @@
 {
-  let name = "llvm"
+  let name = "socket"
   let main = "lib.opi"
   let files = ["lib.opi", "lib.so"]
   let build root =
     let w = "-Wall -Werror -Wextra -Wno-unused" in
     let i = "-I $OPIUM_ROOT/include" in
-    let f = sg/\n/ / `llvm-config --cflags --libs` in
     let src = `echo %{root}/*.c` in
-    `gcc %{w} %{i} %{f} -Og -ggdb -fpic -shared -o%{root}/lib.so %{src}`
+    `gcc %{w} %{i} -Og -ggdb -fpic -shared -o%{root}/lib.so %{src}`
   let postinstall root =
     `rm -v %{root}/lib.so`
 }
